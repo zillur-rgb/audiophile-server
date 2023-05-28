@@ -5,7 +5,7 @@ export interface IUser {
   address: string;
   dateOfBirth: string;
   role: string;
-  products?: string[];
+  products?: any;
   created_at: Date;
   updated_at: Date;
 }

@@ -4,7 +4,7 @@ import {
   getProductsUsingPageFromDB,
   getSingleProductFromDB,
   updateSingleDataInDB,
-} from "../services/products.services";
+} from "../services/products.service";
 import { Request, Response } from "express";
 
 // Creating product
