@@ -1,13 +1,30 @@
+import { getTokenFrom } from "./../utils/checkToken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import Product from "../models/products.model";
 import { IProducts } from "../interfaces/products.interface";
 import User from "../models/user.model";
+import { Request } from "express";
 
 // Adding product to database
 export const addAProductToDB = async (
-  payload: IProducts
-): Promise<IProducts> => {
+  payload: IProducts,
+  request: Request
+): Promise<IProducts | string> => {
+  // Decoding the token that has been sent when sending POST request
+  const decodedToken = jwt.verify(
+    getTokenFrom(request)!,
+    `${process.env.SECRET}`
+  ) as JwtPayload;
+
+  // If decoded token does not match with the user then invalid request
+  if (!decodedToken) {
+    return "Invalid request";
+  }
+
+  console.log("decodedToken", decodedToken);
+
   // Fetching the user from the added_by of the body
-  const user = await User.findById(payload.added_by);
+  const user = await User.findById(decodedToken.email);
 
   // Adding the user._id to the new product object
   const newProduct = new Product({ ...payload, added_by: user?._id });

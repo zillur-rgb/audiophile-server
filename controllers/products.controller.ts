@@ -9,7 +9,7 @@ import { Request, Response } from "express";
 
 // Creating product
 export const createAProduct = async (req: Request, res: Response) => {
-  const createdProduct = await addAProductToDB(req.body);
+  const createdProduct = await addAProductToDB(req.body, req);
 
   res.status(200).json({
     status: 200,
