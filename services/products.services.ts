@@ -1,5 +1,5 @@
 import Product from "../models/products.model";
-import { IProducts } from "./../interfaces/products.interface";
+import { IProducts } from "../interfaces/products.interface";
 
 // Adding product to database
 export const addAProductToDB = async (
@@ -14,6 +14,17 @@ export const addAProductToDB = async (
 // Getting all products from database
 export const getAllProductsFromDB = async (): Promise<IProducts[]> => {
   const allProducts = Product.find();
+
+  return allProducts;
+};
+
+// Getting all products from database
+export const getProductsUsingPageFromDB = async (queries: {
+  skip?: number;
+  limit?: number;
+}): Promise<IProducts[]> => {
+  // Now we will use the skip and limit to get the data based on the page
+  const allProducts = Product.find().skip(queries.skip!).limit(queries.limit!);
 
   return allProducts;
 };
