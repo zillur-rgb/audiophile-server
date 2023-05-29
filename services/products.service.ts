@@ -24,7 +24,7 @@ export const addAProductToDB = async (
   console.log("decodedToken", decodedToken);
 
   // Fetching the user from the added_by of the body
-  const user = await User.findById(decodedToken.email);
+  const user = await User.findOne({ email: decodedToken.email });
 
   // Adding the user._id to the new product object
   const newProduct = new Product({ ...payload, added_by: user?._id });
@@ -45,13 +45,16 @@ export const getAllProductsFromDB = async (): Promise<IProducts[]> => {
   return allProducts;
 };
 
-// Getting all products from database
+// Getting all products from database and the user email of seller
 export const getProductsUsingPageFromDB = async (queries: {
   skip?: number;
   limit?: number;
 }): Promise<IProducts[]> => {
   // Now we will use the skip and limit to get the data based on the page
-  const allProducts = Product.find().skip(queries.skip!).limit(queries.limit!);
+  const allProducts = Product.find()
+    .skip(queries.skip!)
+    .limit(queries.limit!)
+    .populate("added_by", { email: 1 });
 
   return allProducts;
 };

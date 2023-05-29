@@ -10,7 +10,8 @@ export const productsSchema = new Schema<IProducts>({
   category: String,
   description: String,
   added_by: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: "User",
     required: true,
   },
   image: {
