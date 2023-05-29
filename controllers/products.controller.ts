@@ -1,5 +1,6 @@
 import {
   addAProductToDB,
+  deleteSingleDatFromDB,
   getAllProductsFromDB,
   getProductsUsingPageFromDB,
   getSingleProductFromDB,
@@ -91,8 +92,19 @@ export const updateSingleProduct = async (req: Request, res: Response) => {
     const { id } = req.params;
     const payload = req.body;
 
-    const updatedProduct = await updateSingleDataInDB(id, payload);
-
+    const updatedProduct = await updateSingleDataInDB(id, payload, req);
+    if (updatedProduct === "Invalid request") {
+      res.status(400).json({
+        status: 400,
+        message: "No product found",
+      });
+    }
+    if (updatedProduct === "Access denied") {
+      res.status(401).json({
+        status: 401,
+        message: "Forbidden",
+      });
+    }
     res.status(200).json({
       status: 200,
       message: "Updated successfully",
@@ -100,5 +112,22 @@ export const updateSingleProduct = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log("Error occurred", error);
+  }
+};
+
+// Deleting operation
+export const deleteSingleData = async (req: Request, res: Response) => {
+  const { productId } = req.params;
+  const deletedProduct = await deleteSingleDatFromDB(productId, req);
+
+  if (deletedProduct === "Invalid request") {
+    res.status(401).json({
+      message: "forbidden",
+    });
+  } else {
+    res.status(200).json({
+      message: "Succesfully deleted",
+      data: deletedProduct,
+    });
   }
 };

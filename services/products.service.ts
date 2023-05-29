@@ -70,13 +70,86 @@ export const getSingleProductFromDB = async (
 // Updating data with PUT request
 export const updateSingleDataInDB = async (
   id: string,
-  payload: any
-): Promise<IProducts | null> => {
-  const filter = { _id: id };
-  const update = payload;
-  const updatedProduct = await Product.findByIdAndUpdate(filter, update, {
-    new: true,
-  });
+  payload: any,
+  req: Request
+): Promise<IProducts | null | string> => {
+  try {
+    // Extracting the decoded token
+    const decodedToken = jwt.verify(
+      getTokenFrom(req)!,
+      `${process.env.SECRET}`
+    ) as JwtPayload;
 
-  return updatedProduct;
+    // If decoded token does not match with the user then invalid request
+    if (!decodedToken) {
+      return "Invalid request";
+    }
+
+    // Fetching the user
+    const user = await User.findOne({ email: decodedToken.email });
+
+    // Fetching the product using the id to compare
+    const product = await Product.findOne({ _id: id });
+
+    if (user?._id.toString() === product?.added_by.toString()) {
+      const filter = { _id: id };
+      const update = payload;
+      const updatedProduct = await Product.findByIdAndUpdate(filter, update, {
+        new: true,
+      });
+
+      return updatedProduct;
+    }
+    if (!user || !product) {
+      return "Invalid request";
+    }
+
+    // If none of the conditions for deletion are met
+    return "Access denied";
+  } catch (error) {
+    console.error("Error deleting data:", error);
+    return "Error deleting data";
+  }
+};
+
+/**
+ * Deleting data with DELETE request
+ * @param productId is the id of the product we want to delete
+ * @param request request will be use for extracting token from the authorization
+ * @returns the deleted data
+ */
+export const deleteSingleDatFromDB = async (id: string, payload: Request) => {
+  try {
+    // Extracting the decoded token
+    const decodedToken = jwt.verify(
+      getTokenFrom(payload)!,
+      `${process.env.SECRET}`
+    ) as JwtPayload;
+
+    // If decoded token does not match with the user then invalid request
+    if (!decodedToken) {
+      return "Invalid request";
+    }
+
+    // Fetching the user
+    const user = await User.findOne({ email: decodedToken.email });
+
+    // Fetching the product using the id to compare
+    const product = await Product.findOne({ _id: id });
+
+    if (user?._id.toString() === product?.added_by.toString()) {
+      const deletedProduct = await Product.findByIdAndDelete(id);
+      return deletedProduct;
+    }
+
+    if (!user || !product) {
+      return "Invalid request";
+    }
+
+    // If none of the conditions for deletion are met
+    return "Access denied";
+  } catch (error) {
+    console.error("Error deleting data:", error);
+    return "Error deleting data";
+  }
 };
