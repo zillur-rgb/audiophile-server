@@ -1,12 +1,13 @@
 export interface IProducts {
-  model: string;
-  category: "Headphones" | "Earphones" | "Speakers";
+  name: string;
+  category: ICategory;
+  features: string[];
   description: string;
   added_by: any;
-  image: string;
+  image: string[];
   price: number;
   quantity: number;
   sold: number;
-  created_at: Date;
-  updated_at: Date;
 }
+
+export type ICategory = string;

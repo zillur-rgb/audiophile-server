@@ -4,8 +4,8 @@ export interface IUser {
   passwordHash: string;
   address: string;
   dateOfBirth: string;
-  role: string;
+  role: IUserRole;
   products?: any;
-  created_at: Date;
-  updated_at: Date;
 }
+
+export type IUserRole = "seller" | "buyer" | "admin";
