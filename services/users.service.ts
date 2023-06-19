@@ -23,4 +23,4 @@ export const createUserInDB = async (payload: any): Promise<IUser> => {
 
 // Get all users from DB
 export const getAllUsersFromDB = async (): Promise<IUser[]> =>
-  await User.find().populate("products", { model: 1 });
+  await User.find().populate("products");

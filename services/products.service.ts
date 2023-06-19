@@ -15,13 +15,12 @@ export const addAProductToDB = async (
     getTokenFrom(request)!,
     `${process.env.SECRET}`
   ) as JwtPayload;
+  console.log("decodedToken", decodedToken);
 
   // If decoded token does not match with the user then invalid request
   if (!decodedToken) {
     return "Invalid request";
   }
-
-  console.log("decodedToken", decodedToken);
 
   // Fetching the user from the added_by of the body
   const user = await User.findOne({ email: decodedToken.email });
